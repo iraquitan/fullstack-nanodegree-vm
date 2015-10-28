@@ -21,7 +21,7 @@ HTML_WRAP = '''\
       textarea { width: 400px; height: 100px; }
       div.post { border: 1px solid #999;
                  padding: 10px 10px;
-		 margin: 10px 20%%; }
+         margin: 10px 20%%; }
       hr.postbound { width: 50%%; }
       em.date { color: #999 }
     </style>
@@ -43,26 +43,28 @@ POST = '''\
     <div class=post><em class=date>%(time)s</em><br>%(content)s</div>
 '''
 
-## Request handler for main page
-def View(env, resp):
-    '''View is the 'main page' of the forum.
+
+# Request handler for main page
+def view(env, resp):
+    """View is the 'main page' of the forum.
 
     It displays the submission form and the previously posted messages.
-    '''
+    """
     # get posts from database
-    posts = forumdb.GetAllPosts()
+    posts = forumdb.get_all_posts()
     # send results
     headers = [('Content-type', 'text/html')]
     resp('200 OK', headers)
     return [HTML_WRAP % ''.join(POST % p for p in posts)]
 
-## Request handler for posting - inserts to database
-def Post(env, resp):
-    '''Post handles a submission of the forum's form.
+
+# Request handler for posting - inserts to database
+def post(env, resp):
+    """Post handles a submission of the forum's form.
   
     The message the user posted is saved in the database, then it sends a 302
     Redirect back to the main page so the user can see their new post.
-    '''
+    """
     # Get post content
     input = env['wsgi.input']
     length = int(env.get('CONTENT_LENGTH', 0))
@@ -75,21 +77,22 @@ def Post(env, resp):
         content = content.strip()
         if content:
             # Save it in the database
-            forumdb.AddPost(content)
+            forumdb.add_post(content)
     # 302 redirect back to the main page
     headers = [('Location', '/'),
                ('Content-type', 'text/plain')]
     resp('302 REDIRECT', headers) 
     return ['Redirecting']
 
-## Dispatch table - maps URL prefixes to request handlers
-DISPATCH = {'': View,
-            'post': Post,
-	    }
+# Dispatch table - maps URL prefixes to request handlers
+DISPATCH = {'': view,
+            'post': post,
+            }
 
-## Dispatcher forwards requests according to the DISPATCH table.
-def Dispatcher(env, resp):
-    '''Send requests to handlers based on the first path component.'''
+
+# Dispatcher forwards requests according to the DISPATCH table.
+def dispatcher(env, resp):
+    """Send requests to handlers based on the first path component."""
     page = util.shift_path_info(env)
     if page in DISPATCH:
         return DISPATCH[page](env, resp)
@@ -101,7 +104,6 @@ def Dispatcher(env, resp):
 
 
 # Run this bad server only on localhost!
-httpd = make_server('', 8000, Dispatcher)
+httpd = make_server('', 8000, dispatcher)
 print "Serving HTTP on port 8000..."
 httpd.serve_forever()
-
