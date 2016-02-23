@@ -1,0 +1,35 @@
+{% set navigation_bar_right = [
+    ('/signup', 'signup', ' Signup', 'glyphicon glyphicon-user'),
+    ('/login', 'login', ' Login', 'glyphicon glyphicon-log-in')
+] -%}
+{% set active_page = active_page|default('index') -%}
+<nav class="navbar navbar-inverse navbar-fixed-top">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="{{ url_for('index') }}">
+        <img alt="Brand" width="20" height="20" src="{{ url_for('static', filename='img/brand.ico') }}">
+      </a>
+      <a class="navbar-brand" href="{{ url_for('index') }}">Catalog App</a>
+    </div>
+    <div id="navbar" class="collapse navbar-collapse">
+      <ul class="nav navbar-nav navbar-right">
+        {% for href, id, caption, icon in navigation_bar_right %}
+          {% if id == 'login' %}
+            {% if 'username' in session %}
+              {% set href = '/disconnect' %}
+              {% set caption = 'Logout' %}
+              {% set icon = 'glyphicon glyphicon-log-out' %}
+            {% endif %}
+          {% endif %}
+          <li{% if id == active_page %} class="active"{% endif %}><a href="{{ href|e }}"><span class="{{ icon|e }}"></span>{{ caption|e }}</a></li>
+        {% endfor %}
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div>
+</nav>
