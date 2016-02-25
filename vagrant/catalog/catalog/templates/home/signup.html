@@ -1,6 +1,7 @@
 {% extends 'main.html' %}
 {% from 'macros.html' import render_fieldBS %}
 {% block content %}
+  {% set active_page = 'signup' %}
   {% include 'header.html' %}
   <div class="row">
     <div class="col-lg-3"></div>
@@ -18,7 +19,7 @@
         <br>
         <fieldset class="text-right">
           <button type="submit" class="btn btn-primary">Sign up</button>
-          <a href="{{url_for('index')}}" class="btn btn-default" role="button">Cancel</a>
+          <a href="{{url_for('home.index')}}" class="btn btn-default" role="button">Cancel</a>
         </fieldset>
         <br><br>
       </form>

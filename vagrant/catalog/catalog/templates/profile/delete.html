@@ -1,0 +1,21 @@
+{% extends 'main.html' %}
+{% from 'macros.html' import render_fieldBS %}
+{% block content %}
+  {% include 'header.html' %}
+  <div class="row">
+    <div class="col-lg-1"></div>
+    <div class="col-lg-10">
+      <h1>Are you sure you want to delete {{ object.name }} ?</h1>
+      {% if action == 'item' %}
+        <form action="{{ url_for(form_action, item_id=object.id) }}" method = 'POST'>
+      {% elif action == 'category' %}
+        <form action="{{ url_for(form_action, category_id=object.id) }}" method = 'POST'>
+      {% endif %}
+          {{ form.hidden_tag() }}
+          <input type='submit' class="btn btn-danger" value='Delete'>
+          <a href="{{ url_for('home.index') }}" class="btn btn-default" role="button">Cancel</a>
+      </form>
+    </div>
+    <div class="col-lg-1"></div>
+  </div>
+{% endblock %}
