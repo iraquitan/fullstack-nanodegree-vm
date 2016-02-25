@@ -11,13 +11,16 @@
 """
 import datetime
 
+from flask.ext.login import UserMixin
+
 from catalog import db, bcrypt
 from sqlalchemy.ext.hybrid import hybrid_property
 
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
+    social_id = db.Column(db.String(250), unique=True)  # To handle Oauth
     name = db.Column(db.String(250), nullable=False)
     email = db.Column(db.String(250), nullable=False, unique=True)
     _password = db.Column(db.String(128))
@@ -39,33 +42,17 @@ class User(db.Model):
         """
         return {
             'id': self.id,
+            'social_id': self.social_id,
             'name': self.name,
             'email': self.email,
-            'picture': self.picture
+            'picture': self.picture,
+            'date_created': self.date_created
         }
 
     def is_correct_password(self, plaintext):
         if bcrypt.check_password_hash(self._password, plaintext):
             return True
         return False
-
-    @property
-    def is_authenticated(self):
-        return True
-
-    @property
-    def is_active(self):
-        return True
-
-    @property
-    def is_anonymous(self):
-        return False
-
-    def get_id(self):
-        try:
-            return unicode(self.id)  # python 2
-        except NameError:
-            return str(self.id)  # python 3
 
 
 class Category(db.Model):
@@ -99,6 +86,9 @@ class Item(db.Model):
             'id': self.id,
             'name': self.name,
             'description': self.description,
-            'picture': self.picture
+            'picture': self.picture,
+            'category_id': self.category_id,
+            'date_created': self.date_created,
+            'last_updated': self.last_updated
         }
 
