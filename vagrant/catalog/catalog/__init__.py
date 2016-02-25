@@ -16,7 +16,6 @@ from flask.ext.login import LoginManager
 from flask.ext.mail import Mail
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.bcrypt import Bcrypt
-
 app = Flask(__name__, instance_relative_config=True)
 
 app.config.from_object('config')
@@ -31,8 +30,13 @@ if app.debug:
         '../catalog/basic-logging.txt',
         maxBytes=10000, backupCount=0)
     app.logger.addHandler(log_file_handler)
-from catalog.views import home
+
+from catalog.views import home, profile
 from catalog.models import User
+
+# Blueprints
+app.register_blueprint(home.home)
+app.register_blueprint(profile.profile)
 
 app.jinja_env.globals['csrf_token'] = home.generate_csrf_token
 
