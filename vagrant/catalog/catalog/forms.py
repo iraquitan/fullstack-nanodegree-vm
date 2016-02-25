@@ -17,6 +17,10 @@ from wtforms.validators import InputRequired, Optional, url, email, EqualTo, \
     NoneOf
 
 
+class DeleteForm(Form):
+    delete = SubmitField('Delete')
+
+
 class UserForm(Form):
     name = StringField('User name', [
         InputRequired(message='User name is required')])
