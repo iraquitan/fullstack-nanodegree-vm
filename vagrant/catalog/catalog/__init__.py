@@ -21,7 +21,7 @@ app = Flask(__name__, instance_relative_config=True)
 
 app.config.from_object('config')
 app.config.from_pyfile('config.py')
-
+app.jinja_env.add_extension('jinja2.ext.loopcontrols')
 bcrypt = Bcrypt(app)
 mail = Mail(app)
 db = SQLAlchemy(app)
@@ -33,6 +33,8 @@ if app.debug:
     app.logger.addHandler(log_file_handler)
 from catalog.views import home
 from catalog.models import User
+
+app.jinja_env.globals['csrf_token'] = home.generate_csrf_token
 
 login_manager = LoginManager()
 login_manager.init_app(app)
