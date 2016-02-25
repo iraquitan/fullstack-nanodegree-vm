@@ -9,12 +9,33 @@
   <title>Catalog App</title>
   <!-- Bootstrap Latest compiled and minified CSS -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <!-- Google JavaScript -->
+  <script src="https://apis.google.com/js/client:platform.js?onload=start" async defer></script>
+  <script>
+    function start() {
+      gapi.load('auth2', function () {
+        auth2 = gapi.auth2.init({
+          client_id: '990316513834-c752v7n1l7tjnm25lbpmpp0idmtf0tbo.apps.googleusercontent.com',
+          cookiepolicy: 'single_host_origin',
+          accesstype: "offline",
+          // Scopes to request in addition to 'profile' and 'email'
+          scope: 'openid email'
+        });
+      });
+    }
+  </script>
 </head>
 <body>
 <div class="container">
   {% block content %}
   {% endblock %}
 </div>
+{#<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->#}
+{#<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>#}
+{#<!-- Google JavaScript -->#}
+{#<script src="https://apis.google.com/js/client:platform.js?onload=start" async defer></script>#}
 <!-- Latest compiled and minified JavaScript -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 <script src="{{ url_for('static', filename='js/custom.js')}}"></script>
