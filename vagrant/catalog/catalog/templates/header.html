@@ -1,3 +1,4 @@
+{% from 'macros.html' import render_fieldBS %}
 {% set navigation_bar_right = [
     ('/signup', 'signup', ' Signup', 'glyphicon glyphicon-user'),
     ('/login', 'login', ' Login', 'glyphicon glyphicon-log-in')
@@ -20,11 +21,14 @@
     <div id="navbar" class="collapse navbar-collapse">
       <ul class="nav navbar-nav navbar-right">
         {% for href, id, caption, icon in navigation_bar_right %}
-          {% if id == 'login' %}
-            {% if 'username' in session %}
+          {% if current_user.is_authenticated %}
+            {% if id == 'login' %}
               {% set href = '/disconnect' %}
               {% set caption = 'Logout' %}
               {% set icon = 'glyphicon glyphicon-log-out' %}
+            {% endif %}
+            {% if id == 'signup' %}
+              {% continue %}
             {% endif %}
           {% endif %}
           <li{% if id == active_page %} class="active"{% endif %}><a href="{{ href|e }}"><span class="{{ icon|e }}"></span>{{ caption|e }}</a></li>
@@ -33,3 +37,35 @@
     </div><!--/.nav-collapse -->
   </div>
 </nav>
+
+{#<!-- Small modal -->#}
+{#<a href="#myModal" role="button" class="btn btn-large btn-primary" data-toggle="modal">Launch Demo Modal</a>#}
+{##}
+{#<div id="myModal" class="modal fade" role="dialog" aria-labelledby="mySmallModalLabel">#}
+{#  <div class="modal-dialog modal-sm">#}
+{#    <div class="modal-content">#}
+{#      <div class="row">#}
+{#        <div class="col-lg-3"></div>#}
+{#        <div class="col-lg-6">#}
+{#          <h1> Sign up </h1>#}
+{#          <form action="{{ url_for('signup') }}" method="POST">#}
+{#            {{ form.hidden_tag() }}#}
+{#            <fieldset>#}
+{#              {{ render_fieldBS(form.name, placeholder=form.name.label.text) }}#}
+{#              {{ render_fieldBS(form.email, placeholder=form.email.label.text) }}#}
+{#              {{ render_fieldBS(form.password, placeholder=form.password.label.text) }}#}
+{#              {{ render_fieldBS(form.confirm_password, placeholder=form.confirm_password.label.text) }}#}
+{#              {{ render_fieldBS(form.picture, placeholder=form.picture.label.text) }}#}
+{#            </fieldset>#}
+{#            <br>#}
+{#            <fieldset class="text-right">#}
+{#              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>#}
+{#              <button type="submit" class="btn btn-primary">Sign up</button>#}
+{#            </fieldset>#}
+{#          </form>#}
+{#        </div>#}
+{#        <div class="col-lg-3"></div>#}
+{#      </div>#}
+{#    </div>#}
+{#  </div>#}
+{#</div>#}
