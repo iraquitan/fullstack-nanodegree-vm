@@ -9,15 +9,12 @@
  * Time: 15:33
  * To change this templates use File | Settings | File Templates.
 """
-import json
 import random
 import string
 from flask import url_for, render_template, redirect, request, session, \
-    abort, make_response, flash, Blueprint
+    abort, flash, Blueprint
 from flask.ext.login import login_user, logout_user, login_required, \
     current_user
-from oauth2client import client
-from oauth2client.client import FlowExchangeError
 from catalog import app, db
 from catalog.auth import OAuthSignIn
 from catalog.forms import EmailPasswordForm, UserForm
