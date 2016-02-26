@@ -14,7 +14,7 @@ from flask.ext.login import login_required
 
 from catalog import db, app
 from catalog.forms import CategoryForm, ItemForm, DeleteForm
-from catalog.models import Category, Item
+from catalog.models import Category, Item, User
 
 profile = Blueprint('profile', __name__)
 
@@ -86,6 +86,13 @@ def delete_category(category_id):
                                action='category',
                                form_action='profile.delete_category',
                                object=category)
+
+
+@profile.route('/item/<int:item_id>')
+def item_profile(item_id):
+    item = Item.query.filter_by(id=item_id).one()
+    owner = User.query.filter_by(id=item.user_id).one()
+    return render_template('profile/item_profile.html', item=item, owner=owner)
 
 
 @profile.route('/item/new', methods=['GET', 'POST'])
