@@ -59,6 +59,8 @@ class Category(db.Model):
     __tablename__ = 'category'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(250), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.relationship(User)
 
     @property
     def serialize(self):
@@ -76,6 +78,8 @@ class Item(db.Model):
     picture = db.Column(db.String(250))
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
     category = db.relationship(Category)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.relationship(User)
     date_created = db.Column(db.DateTime, default=datetime.datetime.now)
     last_updated = db.Column(db.DateTime, default=datetime.datetime.now,
                              onupdate=datetime.datetime.now)
