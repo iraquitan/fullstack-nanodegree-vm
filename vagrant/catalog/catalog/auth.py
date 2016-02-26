@@ -10,6 +10,12 @@
  * To change this template use File | Settings | File Templates.
 """
 import json
+import os
+
+os.environ['http_proxy'] = ''
+os.environ['https_proxy'] = ''
+os.environ['HTTP_PROXY'] = ''
+os.environ['HTTPS_PROXY'] = ''
 import urllib2
 
 from flask import url_for, current_app, request, redirect
@@ -48,16 +54,19 @@ class OAuthSignIn(object):
 class GoogleSignIn(OAuthSignIn):
     def __init__(self):
         super(GoogleSignIn, self).__init__('google')
-        googleinfo = urllib2.urlopen(
-            'https://accounts.google.com/.well-known/openid-configuration')
-        google_params = json.load(googleinfo)
+        # googleinfo = urllib2.urlopen(
+        #     'https://accounts.google.com/.well-known/openid-configuration')
+        # google_params = json.load(googleinfo)
         self.service = OAuth2Service(
                 name='google',
                 client_id=self.consumer_id,
                 client_secret=self.consumer_secret,
-                authorize_url=google_params.get('authorization_endpoint'),
-                access_token_url=google_params.get('token_endpoint'),
-                base_url=google_params.get('userinfo_endpoint')
+                authorize_url="https://accounts.google.com/o/oauth2/v2/auth",
+                # authorize_url=google_params.get('authorization_endpoint'),
+                access_token_url="https://www.googleapis.com/oauth2/v4/token",
+                # access_token_url=google_params.get('token_endpoint'),
+                base_url="https://www.googleapis.com/oauth2/v3/userinfo"
+                # base_url=google_params.get('userinfo_endpoint')
         )
 
     def authorize(self):
@@ -68,12 +77,14 @@ class GoogleSignIn(OAuthSignIn):
             )
 
     def callback(self):
-        if 'code' not in request.args:
+        auth_code = request.data
+        # if 'code' not in request.args:
+        if not auth_code:
             return None, None, None, None
         oauth_session = self.service.get_auth_session(
-                data={'code': request.args['code'],
+                data={'code': auth_code,
                       'grant_type': 'authorization_code',
-                      'redirect_uri': self.get_callback_url()
+                      'redirect_uri': 'postmessage'
                       },
                 decoder=json.loads
         )
@@ -106,16 +117,22 @@ class FacebookSignIn(OAuthSignIn):
         )
 
     def callback(self):
-        if 'code' not in request.args:
+        auth_code = request.data
+        # if 'code' not in request.args:
+        if not auth_code:
             return None, None, None, None
         oauth_session = self.service.get_auth_session(
-            data={'code': request.args['code'],
-                  'grant_type': 'authorization_code',
+            data={'fb_exchange_token': auth_code,
+                  'grant_type': 'fb_exchange_token',
                   'redirect_uri': self.get_callback_url()}
+            # data={'code': auth_code,
+            #       'grant_type': 'authorization_code',
+            #       'redirect_uri': self.get_callback_url()}
         )
-        me = oauth_session.get('me').json()
-        me_picture = oauth_session.get('me/picture', redirect=0,
-                                       height=200, width=200).json()
+        me = oauth_session.get('me', params={'fields': 'name,id,email'}).json()
+        me_picture = oauth_session.get('me/picture',
+                                       params={'redirect': 0, 'height': 200,
+                                               'width': 200}).json()
         return (
             "facebook${}".format(me['id']),
             me.get('name'),

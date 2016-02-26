@@ -15,6 +15,8 @@ from flask import url_for, render_template, redirect, request, session, \
     abort, flash, Blueprint
 from flask.ext.login import login_user, logout_user, login_required, \
     current_user
+from sqlalchemy import desc
+
 from catalog import app, db
 from catalog.auth import OAuthSignIn
 from catalog.forms import EmailPasswordForm, UserForm
@@ -48,7 +50,7 @@ def random_string():
 @home.route('/index')
 def index():
     categories = Category.query.all()
-    recent_items = Item.query.order_by('date_created').all()
+    recent_items = Item.query.order_by(desc('date_created')).limit(10)
     return render_template('home/index.html', categories=categories,
                            items=recent_items)
 
@@ -107,15 +109,20 @@ def oauth_authorize(provider):
     return oauth.authorize()
 
 
-@home.route('/callback/<provider>')
+@home.route('/callback/<provider>', methods=['POST'])
 def oauth_callback(provider):
     if not current_user.is_anonymous:
         return redirect(url_for('home.index'))
+    token = session.pop('state', None)
+    if not token or token != request.args.get('state'):
+        abort(403)
     oauth = OAuthSignIn.get_provider(provider)
     social_id, username, email, picture = oauth.callback()
     if social_id is None:
         flash('Authentication failed.', category='error')
         return redirect(url_for('home.index'))
+    # TODO Add more than one social profiles and store access tokens
+    user_by_email = User.query.filter_by(email=email).first()
     user = User.query.filter_by(social_id=social_id).first()
     if not user:
         user = User(social_id=social_id, name=username, email=email,
@@ -127,4 +134,12 @@ def oauth_callback(provider):
                 (user.id, user.name)))
     login_user(user, True)
     flash("You are now logged in as {}".format(username), category='success')
-    return redirect(url_for('home.index'))
+    output = ''
+    output += '<h1>Welcome, '
+    output += user.name
+    output += '!</h1>'
+    output += '<img src="'
+    output += user.picture
+    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '  # noqa
+    return output
+    # return redirect(url_for('home.index'))

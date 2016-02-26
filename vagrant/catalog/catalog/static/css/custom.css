@@ -16,3 +16,30 @@ body { padding-top: 70px; padding-bottom: 10px; }
 	font-weight: 400;
 	margin-top: 0px;
 }
+
+ul.profile-details {
+	margin-top: 10px;
+	padding: 0 5px;
+	list-style: none;
+	color: #7c848d
+}
+
+ul.profile-details li div {
+	color: #b2b8bd
+}
+
+ul.profile-details li div span {
+	top: 4px;
+	left: -5px;
+	color: #ced1d4;
+	width: 20px;
+	text-align: center
+}
+
+ul.profile-details li div i {
+	top: 4px;
+	left: -5px;
+	color: #ced1d4;
+	width: 20px;
+	text-align: center
+}

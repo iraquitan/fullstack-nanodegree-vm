@@ -8,6 +8,8 @@
           <div class="alert alert-info alert-dismissible" role="alert">
         {% elif category == 'error' %}
           <div class="alert alert-danger alert-dismissible" role="alert">
+        {% elif category == 'warning' %}
+          <div class="alert alert-warning alert-dismissible" role="alert">
         {% elif category == 'success' %}
           <div class="alert alert-success alert-dismissible" role="alert">
         {% endif %}
@@ -27,7 +29,7 @@
 {#            <div class="panel-body"></div>#}
             <div class="list-group">
               {% for category in categories %}
-                <a href="#" class="list-group-item">{{ category.name }}
+                <a href="{{ url_for('profile.category_items', category_id=category.id) }}" class="list-group-item">{{ category.name }}
 {#                  <span class="badge">14</span>#}
                 </a>
               {% endfor %}
@@ -44,7 +46,7 @@
             <div class="panel-heading"><h3>Recently added items</h3></div>
             <div class="list-group">
               {% for item in items %}
-                <a href="#" class="list-group-item">{{ item.name }}
+                <a href="{{ url_for('profile.item_profile', item_id = item.id) }}" class="list-group-item">{{ item.name }}
                   <span class="label label-default">{{ item.category.name }}</span>
                 </a>
               {% endfor %}

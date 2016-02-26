@@ -1,8 +1,4 @@
 {% from 'macros.html' import render_fieldBS %}
-{% set navigation_bar_right = [
-    ('/signup', 'signup', ' Signup', 'glyphicon glyphicon-user'),
-    ('/login', 'login', ' Login', 'glyphicon glyphicon-log-in')
-] -%}
 {% set active_page = active_page|default('index') -%}
 <nav class="navbar navbar-inverse navbar-fixed-top">
   <div class="container-fluid">
@@ -21,7 +17,14 @@
     <div id="navbar" class="collapse navbar-collapse">
       <ul class="nav navbar-nav navbar-right">
         {% if current_user.is_authenticated %}
-          <li{% if active_page ==  'login' %} class="active"{% endif %}><a href="{{ url_for('home.logout') }}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ current_user.name }} <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="{{ url_for('profile.user_profile', user_id=current_user.id) }}"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a href="{{ url_for('home.logout') }}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+            </ul>
+          </li>
         {% else %}
           <li{% if active_page ==  'signup' %} class="active"{% endif %}><a href="{{ url_for('home.signup') }}"><span class="glyphicon glyphicon-user"></span> Signup</a></li>
           <li{% if active_page ==  'login' %} class="active"{% endif %}><a href="{{ url_for('home.login') }}"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>

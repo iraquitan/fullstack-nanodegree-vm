@@ -31,18 +31,19 @@ if app.debug:
         maxBytes=10000, backupCount=0)
     app.logger.addHandler(log_file_handler)
 
-from catalog.views import home, profile
+from catalog.views import home, profile, api
 from catalog.models import User
 
 # Blueprints
 app.register_blueprint(home.home)
 app.register_blueprint(profile.profile)
+app.register_blueprint(api.api)
 
 app.jinja_env.globals['csrf_token'] = home.generate_csrf_token
 
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = "login"
+login_manager.login_view = "home.login"
 
 
 @login_manager.user_loader

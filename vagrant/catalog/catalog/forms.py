@@ -57,7 +57,7 @@ class ItemForm(Form):
 
 
 class EmailPasswordForm(Form):
-    email = EmailField('Email', validators=[email, InputRequired(
+    email = EmailField('Email', validators=[email(), InputRequired(
         message='Email is required'
     )])
     password = PasswordField('Password', validators=[InputRequired(
