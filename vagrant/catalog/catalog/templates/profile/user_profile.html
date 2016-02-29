@@ -22,17 +22,22 @@
             </div>
             {{ user.email }}
           </li>
-          <li>
-            <div>
-              {% if user.social_id.startswith('google') %}
-                <i class="fa fa-google"></i>
-              {% elif user.social_id.startswith('facebook') %}
-                <i class="fa fa-facebook"></i>
-              {% endif %}
-               social id
-            </div>
-            {{ user.social_id }}
-          </li>
+        </ul>
+        <h3>Social Information</h3>
+        <ul class="profile-details">
+          {% for sp in user.social_profiles %}
+            <li>
+              <div>
+                {% if sp.provider == 'google' %}
+                  <i class="fa fa-google"></i>
+                {% elif sp.provider == 'facebook' %}
+                  <i class="fa fa-facebook"></i>
+                {% endif %}
+                {{ sp.provider }}
+              </div>
+              <a href="{{ sp.profile }}">{{ sp.provider.title() }} Profile</a>
+            </li>
+          {% endfor %}
         </ul>
       </div>
     </div>

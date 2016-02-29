@@ -17,15 +17,27 @@ from catalog import db, bcrypt
 from sqlalchemy.ext.hybrid import hybrid_property
 
 
+class UserSocialProfile(db.Model):
+    __tablename__ = 'social_profile'
+    id = db.Column(db.Integer, primary_key=True)
+    provider = db.Column(db.String(150), nullable=False)
+    social_id = db.Column(db.String(250))
+    access_token = db.Column(db.String(250), nullable=False)
+    profile = db.Column(db.String(250))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    # TODO Need store access token expire time
+
+
 class User(UserMixin, db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
-    social_id = db.Column(db.String(250), unique=True)  # To handle Oauth
+    # social_id = db.Column(db.String(250), unique=True)  # To handle Oauth
     name = db.Column(db.String(250), nullable=False)
     email = db.Column(db.String(250), nullable=False, unique=True)
     _password = db.Column(db.String(128))
     picture = db.Column(db.String(250))
     date_created = db.Column(db.DateTime, default=datetime.datetime.now)
+    social_profiles = db.relationship(UserSocialProfile)
 
     @hybrid_property
     def password(self):

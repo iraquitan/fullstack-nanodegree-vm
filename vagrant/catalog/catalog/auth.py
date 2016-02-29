@@ -12,10 +12,10 @@
 import json
 import os
 
-os.environ['http_proxy'] = ''
-os.environ['https_proxy'] = ''
-os.environ['HTTP_PROXY'] = ''
-os.environ['HTTPS_PROXY'] = ''
+# os.environ['http_proxy'] = ''
+# os.environ['https_proxy'] = ''
+# os.environ['HTTP_PROXY'] = ''
+# os.environ['HTTPS_PROXY'] = ''
 import urllib2
 
 from flask import url_for, current_app, request, redirect
@@ -80,7 +80,8 @@ class GoogleSignIn(OAuthSignIn):
         auth_code = request.data
         # if 'code' not in request.args:
         if not auth_code:
-            return None, None, None, None
+            # return None, None, None, None
+            return None, None
         oauth_session = self.service.get_auth_session(
                 data={'code': auth_code,
                       'grant_type': 'authorization_code',
@@ -89,12 +90,18 @@ class GoogleSignIn(OAuthSignIn):
                 decoder=json.loads
         )
         me = oauth_session.get('').json()
+        user_info = (me.get('name'), me.get('email'), me.get('picture'))
+        social_info = ('google', me.get('sub'),
+                       oauth_session.access_token, me.get('profile'))
         return (
-            "google${}".format(me['sub']),
-            me['name'],
-            me['email'],
-            me['picture']
+            user_info, social_info
         )
+        # return (
+        #     "google${}".format(me['sub']),
+        #     me['name'],
+        #     me['email'],
+        #     me['picture']
+        # )
 
 
 class FacebookSignIn(OAuthSignIn):
@@ -120,7 +127,8 @@ class FacebookSignIn(OAuthSignIn):
         auth_code = request.data
         # if 'code' not in request.args:
         if not auth_code:
-            return None, None, None, None
+            # return None, None, None, None
+            return None, None
         oauth_session = self.service.get_auth_session(
             data={'fb_exchange_token': auth_code,
                   'grant_type': 'fb_exchange_token',
@@ -129,13 +137,21 @@ class FacebookSignIn(OAuthSignIn):
             #       'grant_type': 'authorization_code',
             #       'redirect_uri': self.get_callback_url()}
         )
-        me = oauth_session.get('me', params={'fields': 'name,id,email'}).json()
+        me = oauth_session.get('me',
+                               params={'fields': 'name,id,email,link'}).json()
+        social_info = ('facebook', me.get('id'), oauth_session.access_token,
+                  me.get('link'))
         me_picture = oauth_session.get('me/picture',
                                        params={'redirect': 0, 'height': 200,
                                                'width': 200}).json()
+        user_info = (me.get('name'), me.get('email'),
+                me_picture.get('data').get('url'))
         return (
-            "facebook${}".format(me['id']),
-            me.get('name'),
-            me.get('email'),
-            me_picture.get('data')['url']
+            user_info, social_info
         )
+        # return (
+        #     "facebook${}".format(me['id']),
+        #     me.get('name'),
+        #     me.get('email'),
+        #     me_picture.get('data')['url']
+        # )

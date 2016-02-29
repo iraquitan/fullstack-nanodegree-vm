@@ -20,7 +20,7 @@ from sqlalchemy import desc
 from catalog import app, db
 from catalog.auth import OAuthSignIn
 from catalog.forms import EmailPasswordForm, UserForm
-from catalog.models import Category, Item, User
+from catalog.models import Category, Item, User, UserSocialProfile
 
 home = Blueprint('home', __name__)
 
@@ -117,23 +117,45 @@ def oauth_callback(provider):
     if not token or token != request.args.get('state'):
         abort(403)
     oauth = OAuthSignIn.get_provider(provider)
-    social_id, username, email, picture = oauth.callback()
-    if social_id is None:
+    # social_id, username, email, picture = oauth.callback()
+    user_info, social_info = oauth.callback()
+    if user_info is None:
         flash('Authentication failed.', category='error')
         return redirect(url_for('home.index'))
     # TODO Add more than one social profiles and store access tokens
-    user_by_email = User.query.filter_by(email=email).first()
-    user = User.query.filter_by(social_id=social_id).first()
+    user = User.query.filter_by(email=user_info[1]).first()
+    # user = User.query.filter_by(social_id=social_id).first()
     if not user:
-        user = User(social_id=social_id, name=username, email=email,
-                    picture=picture)
+        user = User(name=user_info[0], email=user_info[1],
+                    picture=user_info[2])
+        # user = User(social_id=social_id, name=username, email=email,
+        #             picture=picture)
         db.session.add(user)
+        db.session.flush()
+        social = UserSocialProfile(provider=social_info[0],
+                                   social_id=social_info[1],
+                                   access_token=social_info[2],
+                                   profile=social_info[3], user_id=user.id)
+        db.session.add(social)
         db.session.commit()
         if app.debug:
             app.logger.debug("User {} signed up!".format(
                 (user.id, user.name)))
+    else:
+        social = UserSocialProfile.query.filter_by(
+            social_id=social_info[1]).first()
+        if not social:
+            social = UserSocialProfile(provider=social_info[0],
+                                       social_id=social_info[1],
+                                       access_token=social_info[2],
+                                       profile=social_info[3], user_id=user.id)
+            db.session.add(social)
+            db.session.commit()
+            if app.debug:
+                app.logger.debug("User {0} signed in with {1}!".format(
+                    (user.id, user.name), social.provider))
     login_user(user, True)
-    flash("You are now logged in as {}".format(username), category='success')
+    flash("You are now logged in as {}".format(user.name), category='success')
     output = ''
     output += '<h1>Welcome, '
     output += user.name
