@@ -4,82 +4,33 @@
   {% set active_page = 'login' %}
   {% set csrf_state = csrf_token() %}
   <script>
-    // This is called with the results from from FB.getLoginStatus().
-{#    function statusChangeCallback(response) {#}
-{#      console.log('statusChangeCallback');#}
-{#      console.log(response);#}
-{#      // The response object is returned with a status field that lets the#}
-{#      // app know the current login status of the person.#}
-{#      // Full docs on the response object can be found in the documentation#}
-{#      // for FB.getLoginStatus().#}
-{#      if (response.status === 'connected') {#}
-{#        // Logged into your app and Facebook.#}
-{#        sendToServer(response.authResponse.accessToken);#}
-{#        testAPI();#}
-{#      } else if (response.status === 'not_authorized') {#}
-{#        // The person is logged into Facebook, but not your app.#}
-{#        document.getElementById('result').innerHTML = 'Please log ' +#}
-{#          'into this app with Facebook.';#}
-{#      } else {#}
-{#        // The person is not logged into Facebook, so we're not sure if#}
-{#        // they are logged into this app or not.#}
-{#        document.getElementById('result').innerHTML = 'Please log ' +#}
-{#          'into Facebook.';#}
-{#      }#}
-{#    }#}
-
-    // This function is called when someone finishes with the Login
-    // Button.  See the onlogin handler attached to it in the sample
-    // code below.
-{#    function checkLoginState() {#}
-{#      FB.getLoginStatus(function(response) {#}
-{#        statusChangeCallback(response);#}
-{#      });#}
-{#    }#}
-
     function onLogIn() {
       FB.getLoginStatus(function(response) {
-        if (response.status === 'connected')
-        sendToServer(response.authResponse.accessToken);
+        if (response.status === 'connected') {
+          $('#fb_signinButton').attr('style', 'display: none');
+          sendToServer(response.authResponse.accessToken);
+        }
       });
     }
 
-
-    window.fbAsyncInit = function() {
-    FB.init({
-      appId      : '{{ config['OAUTH_CREDENTIALS']['facebook']['id'] }}',
-      cookie     : true,  // enable cookies to allow the server to access
-                          // the session
-      xfbml      : true,  // parse social plugins on this page
-      version    : 'v2.5' // use graph api version 2.5
-    });
-
-    // Now that we've initialized the JavaScript SDK, we call
-    // FB.getLoginStatus().  This function gets the state of the
-    // person visiting this page and can return one of three states to
-    // the callback you provide.  They can be:
-    //
-    // 1. Logged into your app ('connected')
-    // 2. Logged into Facebook, but not your app ('not_authorized')
-    // 3. Not logged into Facebook and can't tell if they are logged into
-    //    your app or not.
-    //
-    // These three cases are handled in the callback function.
-
-{#    FB.getLoginStatus(function(response) {#}
-{#      statusChangeCallback(response);#}
+{#    window.fbAsyncInit = function() {#}
+{#    FB.init({#}
+{#      appId      : '{{ config['OAUTH_CREDENTIALS']['facebook']['id'] }}',#}
+{#      cookie     : true,  // enable cookies to allow the server to access#}
+{#                          // the session#}
+{#      xfbml      : true,  // parse social plugins on this page#}
+{#      version    : 'v2.5' // use graph api version 2.5#}
 {#    });#}
-
-    };
-
-    // Load the SDK asynchronously
-    (function(d, s, id) {
-      var js, fjs = d.getElementsByTagName(s)[0];
-      if (d.getElementById(id)) return;
-      js = d.createElement(s); js.id = id;
-      js.src = "//connect.facebook.net/en_US/sdk.js";
-      fjs.parentNode.insertBefore(js, fjs);
-    }(document, 'script', 'facebook-jssdk'));
+{#    };#}
+{##}
+{#    // Load the SDK asynchronously#}
+{#    (function(d, s, id) {#}
+{#      var js, fjs = d.getElementsByTagName(s)[0];#}
+{#      if (d.getElementById(id)) return;#}
+{#      js = d.createElement(s); js.id = id;#}
+{#      js.src = "//connect.facebook.net/en_US/sdk.js";#}
+{#      fjs.parentNode.insertBefore(js, fjs);#}
+{#    }(document, 'script', 'facebook-jssdk'));#}
 
     function sendToServer(auth_token) {
       $.ajax({
@@ -111,22 +62,22 @@
       <h3> Social </h3>
       <div class="row">
         <div class="col-lg-6 text-center">
-          <div class="g-signin2" id="signinButton"
-            data-scope="openid email"
-            data-clientid="{{ config['OAUTH_CREDENTIALS']['google']['id'] }}"
-            data-redirecturi="postmessage"
-            data-accesstype="offline"
-            data-cookiepolicy="single_host_origin"
-            data-onsuccess="signInCallback"
-            data-approvalprompt="force">
+          <div class="g-signin2" id="g_signinButton"
+               data-scope="openid email"
+               data-clientid="{{ config['OAUTH_CREDENTIALS']['google']['id'] }}"
+               data-redirecturi="postmessage"
+               data-accesstype="offline"
+               data-cookiepolicy="single_host_origin"
+               data-onsuccess="onSignIn"
+               data-onfailure="onSignInFailure"
+               data-approvalprompt="force">
           </div>
-{#          <button class="btn btn-danger" id="signinButton">Sign in with Google</button>#}
         </div>
         <div class="col-lg-6 text-center">
-          <fb:login-button
-                  scope="public_profile,email"
-                  size="large"
-                  onlogin="onLogIn();">
+          <fb:login-button id="fb_signinButton"
+                           scope="public_profile,email"
+                           size="large"
+                           onlogin="onLogIn();">
           </fb:login-button>
         </div>
       </div>
@@ -149,65 +100,41 @@
     <div class="col-lg-3"></div>
   </div>
   <script>
-    $('#signinButton').click(function() {
-      // signInCallback defined in step 6.
-      auth2.grantOfflineAccess({'redirect_uri': 'postmessage'}).then(signInCallback);
-    });
-{#    function onSignIn(googleUser) {#}
-{#      // Hide the sign-in button now that the user is authorized, for example:#}
-{#      $('#signinButton').attr('style', 'display: none');#}
-{#      var id_token = googleUser.getAuthResponse().id_token;#}
-{#      $.ajax({#}
-{#        type: 'POST',#}
-{#        url: '{{ url_for('home.oauth_callback', provider='google', state=csrf_state) }}',#}
-{#        contentType: 'application/octet-stream; charset=utf-8',#}
-{#        processData: false,#}
-{#        data: id_token,#}
-{#        success: function(result) {#}
-{#          // Handle or verify the server response.#}
-{#          if (result) {#}
-{#            $('#result').html('Login Successful!</br>'+ result + '</br>Redirecting...')#}
-{#            setTimeout(function() {#}
-{#              window.location.href = "{{ url_for('home.index') }}";#}
-{#            }, 3000);#}
-{#          }#}
-{#        }#}
-{#      });#}
-{#    }#}
-{#    function onSignInFailure() {#}
-{#      // Handle sign-in errors#}
-{#      $('#result').html('Failed to sign in.');#}
-{#    }#}
-    function signInCallback(authResult) {
-      if (authResult['code']) {
+    auth2 = gapi.auth2.init();
+    auth2.attachClickHandler('g_signinButton', onSignIn, onSignInFailure);
 
-        // Hide the sign-in button now that the user is authorized, for example:
-        $('#signinButton').attr('style', 'display: none');
-
-        // Send the code to the server
-        $.ajax({
-          type: 'POST',
-          url: '{{ url_for('home.oauth_callback', provider='google', state=csrf_state) }}',
-          contentType: 'application/octet-stream; charset=utf-8',
-          processData: false,
-          data: authResult['code'],
-          success: function(result) {
-            // Handle or verify the server response.
-            if (result) {
-              $('#result').html('Login Successful!</br>'+ result + '</br>Redirecting...')
-              setTimeout(function() {
-                window.location.href = "{{ url_for('home.index') }}";
-              }, 3000);
-            } else if (authResult['error']) {
-              console.log('There was an error: ' + authResult['error']);
-            } else {
-              $('#result').html('Failed to make a server-side call. Check your configuration and console.');
-            }
-          }
-        });
-      } else {
-        // There was an error.
+    function onSignIn(authResult) {
+      // Hide the sign-in button now that the user is authorized
+      $('#g_signinButton').attr('style', 'display: none');
+      // Check if code is in response from google
+      var code = authResult['code'];
+      if (code) { // If yes send the code to server
+        var toServer = code;
+      } else { // If not send the already signed user email to server
+        var profile = authResult.getBasicProfile();
+        var email = profile.getEmail();
+        var toServer = email;
       }
+      $.ajax({
+        type: 'POST',
+        url: '{{ url_for('home.oauth_callback', provider='google', state=csrf_state) }}',
+        contentType: 'application/octet-stream; charset=utf-8',
+        processData: false,
+        data: toServer,
+        success: function(result) {
+          // Handle or verify the server response.
+          if (result) {
+            $('#result').html('Login Successful!</br>'+ result + '</br>Redirecting...')
+            setTimeout(function() {
+              window.location.href = "{{ url_for('home.index') }}";
+            }, 3000);
+          }
+        }
+      });
+    }
+    function onSignInFailure() {
+      // Handle sign-in errors
+      $('#result').html('Failed to sign in. Try again please.');
     }
   </script>
 {% endblock %}

@@ -12,13 +12,13 @@
 import json
 import os
 
-# os.environ['http_proxy'] = ''
-# os.environ['https_proxy'] = ''
-# os.environ['HTTP_PROXY'] = ''
-# os.environ['HTTPS_PROXY'] = ''
+os.environ['http_proxy'] = ''
+os.environ['https_proxy'] = ''
+os.environ['HTTP_PROXY'] = ''
+os.environ['HTTPS_PROXY'] = ''
 import urllib2
 
-from flask import url_for, current_app, request, redirect
+from flask import url_for, current_app, request, redirect, session
 from rauth import OAuth2Service
 
 
@@ -54,21 +54,27 @@ class OAuthSignIn(object):
 class GoogleSignIn(OAuthSignIn):
     def __init__(self):
         super(GoogleSignIn, self).__init__('google')
-        # googleinfo = urllib2.urlopen(
-        #     'https://accounts.google.com/.well-known/openid-configuration')
-        # google_params = json.load(googleinfo)
-        self.service = OAuth2Service(
+        try:
+            googleinfo = urllib2.urlopen(
+                'https://accounts.google.com/.well-known/openid-configuration')
+            google_params = json.load(googleinfo)
+            self.service = OAuth2Service(
+                name='google',
+                client_id=self.consumer_id,
+                client_secret=self.consumer_secret,
+                authorize_url=google_params.get('authorization_endpoint'),
+                access_token_url=google_params.get('token_endpoint'),
+                base_url=google_params.get('userinfo_endpoint')
+            )
+        except urllib2.HTTPError:
+            self.service = OAuth2Service(
                 name='google',
                 client_id=self.consumer_id,
                 client_secret=self.consumer_secret,
                 authorize_url="https://accounts.google.com/o/oauth2/v2/auth",
-                # authorize_url=google_params.get('authorization_endpoint'),
                 access_token_url="https://www.googleapis.com/oauth2/v4/token",
-                # access_token_url="https://www.googleapis.com/oauth2/v3/tokeninfo",
-                # access_token_url=google_params.get('token_endpoint'),
                 base_url="https://www.googleapis.com/oauth2/v3/userinfo"
-                # base_url=google_params.get('userinfo_endpoint')
-        )
+            )
 
     def authorize(self):
         return redirect(self.service.get_authorize_url(
@@ -79,9 +85,7 @@ class GoogleSignIn(OAuthSignIn):
 
     def callback(self):
         auth_code = request.data
-        # if 'code' not in request.args:
         if not auth_code:
-            # return None, None, None, None
             return None, None
         oauth_session = self.service.get_auth_session(
                 data={'code': auth_code,
@@ -93,6 +97,7 @@ class GoogleSignIn(OAuthSignIn):
         me = oauth_session.get('').json()
         user_info = (me.get('name'), me.get('email'), me.get('picture'))
         social_info = ('google', me.get('sub'), me.get('profile'))
+        session['login'] = 'google'
         return (
             user_info, social_info
         )
@@ -119,9 +124,7 @@ class FacebookSignIn(OAuthSignIn):
 
     def callback(self):
         auth_code = request.data
-        # if 'code' not in request.args:
         if not auth_code:
-            # return None, None, None, None
             return None, None
         oauth_session = self.service.get_auth_session(
             data={'fb_exchange_token': auth_code,
@@ -135,10 +138,11 @@ class FacebookSignIn(OAuthSignIn):
                                params={'fields': 'name,id,email,link'}).json()
         social_info = ('facebook', me.get('id'), me.get('link'))
         me_picture = oauth_session.get('me/picture',
-                                       params={'redirect': 0, 'height': 500,
-                                               'width': 500}).json()
+                                       params={'redirect': 0, 'height': 400,
+                                               'width': 400}).json()
         user_info = (me.get('name'), me.get('email'),
                      me_picture.get('data').get('url'))
+        session['login'] = 'facebook'
         return (
             user_info, social_info
         )

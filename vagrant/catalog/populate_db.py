@@ -38,7 +38,6 @@ category = Category.query.filter_by(name='Soccer').first()
 name = "Two Shin Guards"
 description = "A shin guard or shin pad is a piece of equipment worn on the front of a player's shin to protect them from injury. These are commonly used in sports including association football (soccer), baseball, ice hockey, field hockey, lacrosse, rugby, cricket, and other sports. This is due to either being required by the rules/laws of the sport or worn voluntarily by the participants for protective measures."  # noqa
 picture = "https://s-media-cache-ak0.pinimg.com/564x/dd/dc/39/dddc396a4585532a78b6d7caeea9f5b5.jpg"  # noqa
-
 new_item = Item(name=name, description=description, category=category,
                 picture=picture, user_id=1)
 db.session.add(new_item)
@@ -63,6 +62,62 @@ db.session.commit()
 name = "Soccer Cleats"
 description = "Cleats or studs are protrusions on the sole of a shoe, or on an external attachment to a shoe, that provide additional traction on a soft or slippery surface. In American English the term cleats is used synecdochically to refer to shoes featuring such protrusions. This does not happen in British English; the term 'studs' is never used to refer to the shoes, which would instead be known as 'football boots', 'rugby boots', and so on."
 picture = "http://www.royalsocceracademy.com/images/history-of-soccer-cleats6.jpg"
+new_item = Item(name=name, description=description, category=category,
+                picture=picture, user_id=1)
+db.session.add(new_item)
+db.session.commit()
+
+name = "Soccer Ball"
+description = "A football, soccer ball, or association football ball is the ball used in the sport of association football. The name of the ball varies according to whether the sport is called \"football\", \"soccer\", or \"association football\". The balls spherical shape, as well as its size, weight, and material composition, are specified by Law 2 of the Laws of the Game maintained by the International Football Association Board. Additional, more stringent, standards are specified by FIFA and subordinate governing bodies for the balls used in the competitions they sanction."
+picture = "http://c.fastcompany.net/multisite_files/fastcompany/imagecache/inline-large/inline/2013/12/3022879-inline-s-6-2013-fifa-world-cup-brasil-ball.jpg"
+new_item = Item(name=name, description=description, category=category,
+                picture=picture, user_id=1)
+db.session.add(new_item)
+db.session.commit()
+
+name = "Soccer Socks"
+description = "These leg markings consist of short white ankle socks with green stripes on the back hooves, and puffy \"wrist bands\" on the front."
+picture = "http://www.soccergarage.com/images/T/5-56.jpg"
+new_item = Item(name=name, description=description, category=category,
+                picture=picture, user_id=1)
+db.session.add(new_item)
+db.session.commit()
+
+name = "Soccer Shorts"
+description = "Soccer shorts similar to soccer jerseys should be able to let air come in. On some soccer shorts they have your number on them. Soccer shorts always have your team color so the coaches and refs can identify which players are which."
+picture = "http://www.yomister.com/image/large/iPZ8kLwDTalalGc9k=NHj=Vr75RB65R8TuVDjYhh/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/1/3/13-14_nike_manchester_united_home_short.jpg"
+new_item = Item(name=name, description=description, category=category,
+                picture=picture, user_id=1)
+db.session.add(new_item)
+db.session.commit()
+
+name = "F.C. Barcelona - Jersey"
+description = "FC Barcelona, also known as Barca, has given its fans reason to cheer in recent years due to their great success in Spain's First Division and the UEFA Champions League. Shop for your FC Barcelona soccer gear including the Barcelona soccer jersey at World Soccer Shop in the USA."
+picture = "http://football2014wc.com/wp-content/uploads/2014/05/FC-Barcelona-2013-14-Home-Kit.jpg"
+new_item = Item(name=name, description=description, category=category,
+                picture=picture, user_id=1)
+db.session.add(new_item)
+db.session.commit()
+
+name = "Arsenal Football Club - Jersey"
+description = "Arsenal F.C. is one of the most storied clubs in English football history. Buy all your Arsenal soccer gear including the Arsenal soccer jersey at World Soccer Shop in the USA."
+picture = "http://www.prodirectsoccer.com/productimages/V3_1_Main/84149.jpg"
+new_item = Item(name=name, description=description, category=category,
+                picture=picture, user_id=1)
+db.session.add(new_item)
+db.session.commit()
+
+name = "Real Madrid - Jersey"
+description = "Legendary players like Beckham, Raul, Owen, Ronaldo, and Zidane, have made Real Madrid one of the world's most popular, and successful teams. Buy all your Real Madrid soccer gear including the Real Madrid soccer jersey at World Soccer Shop in the USA."
+picture = "http://www.scaryfootball.com/wp-content/uploads/2013/05/real-madrid-new-jersey-2013-2014-fly-emirates-official.jpg"
+new_item = Item(name=name, description=description, category=category,
+                picture=picture, user_id=1)
+db.session.add(new_item)
+db.session.commit()
+
+name = "F.C. Bayern Munich - Jersey"
+description = "The Reds are one of the giants of European soccer, and Germany's Bundesliga."
+picture = "http://jogjaartfestival.com/wp-content/uploads/2015/09/27703-fc-bayern-munich-201415-mens-official-away-jersey-740.jpg"
 new_item = Item(name=name, description=description, category=category,
                 picture=picture, user_id=1)
 db.session.add(new_item)

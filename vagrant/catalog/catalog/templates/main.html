@@ -14,21 +14,35 @@
   <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
   <!-- Google JavaScript -->
-{#  <script src="https://apis.google.com/js/client:platform.js?onload=start" async defer></script>#}
-  <script src="https://apis.google.com/js/platform.js" async defer></script>
+  <script src="https://apis.google.com/js/platform.js?onload=start" async defer></script>
   <meta name="google-signin-client_id" content="{{ config['OAUTH_CREDENTIALS']['google']['id'] }}">
-{#  <script>#}
-{#    function start() {#}
-{#      gapi.load('auth2', function () {#}
-{#        auth2 = gapi.auth2.init({#}
-{#          client_id: '{{ config['OAUTH_CREDENTIALS']['google']['id'] }}',#}
-{#          cookiepolicy: 'single_host_origin',#}
-{#          access_type: "offline",#}
-{#          // Scopes to request in addition to 'profile' and 'email'#}
-{#        });#}
-{#      });#}
-{#    }#}
-{#  </script>#}
+  <script>
+    function start() {
+      gapi.load('auth2', function() {
+{#        gapi.auth2.init();#}
+        gapi.auth2.getAuthInstance();
+      });
+    }
+
+    window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '{{ config['OAUTH_CREDENTIALS']['facebook']['id'] }}',
+      cookie     : true,  // enable cookies to allow the server to access
+                          // the session
+      xfbml      : true,  // parse social plugins on this page
+      version    : 'v2.5' // use graph api version 2.5
+    });
+    };
+
+    // Load the SDK asynchronously
+    (function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/en_US/sdk.js";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+  </script>
 </head>
 <body>
 <div class="container">

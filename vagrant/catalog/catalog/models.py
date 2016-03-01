@@ -34,6 +34,8 @@ class User(UserMixin, db.Model):
     _password = db.Column(db.String(128))
     picture = db.Column(db.String(250))
     date_created = db.Column(db.DateTime, default=datetime.datetime.now)
+    last_updated = db.Column(db.DateTime, default=datetime.datetime.now,
+                             onupdate=datetime.datetime.now)
     social_profiles = db.relationship(UserSocialProfile)
 
     @hybrid_property
@@ -43,6 +45,11 @@ class User(UserMixin, db.Model):
     @password.setter
     def _set_password(self, plaintext):
         self._password = bcrypt.generate_password_hash(plaintext)
+
+    def is_correct_password(self, plaintext):
+        if bcrypt.check_password_hash(self._password, plaintext):
+            return True
+        return False
 
     @property
     def serialize(self):
@@ -58,11 +65,6 @@ class User(UserMixin, db.Model):
             'date_created': self.date_created
         }
 
-    def is_correct_password(self, plaintext):
-        if bcrypt.check_password_hash(self._password, plaintext):
-            return True
-        return False
-
 
 class Category(db.Model):
     __tablename__ = 'category'
@@ -70,6 +72,9 @@ class Category(db.Model):
     name = db.Column(db.String(250), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship(User)
+    date_created = db.Column(db.DateTime, default=datetime.datetime.now)
+    last_updated = db.Column(db.DateTime, default=datetime.datetime.now,
+                             onupdate=datetime.datetime.now)
 
     @property
     def serialize(self):

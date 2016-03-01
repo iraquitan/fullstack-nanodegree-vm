@@ -1,0 +1,28 @@
+{% extends 'main.html' %}
+{% from 'macros.html' import render_fieldBS %}
+{% block content %}
+  {% set active_page = 'user_edit_profile' %}
+  {% include 'header.html' %}
+  <div class="row">
+    <div class="col-lg-3"></div>
+    <div class="col-lg-6">
+      <h1> Edit User Info </h1>
+      <form action="{{ url_for('profile.edit_user', user_id=user.id) }}" method="POST">
+        {{ form.hidden_tag() }}
+        <fieldset>
+          {{ render_fieldBS(form.email, placeholder=form.email.data) }}
+          {{ render_fieldBS(form.password, placeholder='New password') }}
+          {{ render_fieldBS(form.confirm_password, placeholder='New password confirmation') }}
+          {{ render_fieldBS(form.picture, placeholder=form.picture.data) }}
+        </fieldset>
+        <br>
+        <fieldset class="text-right">
+          <button type="submit" class="btn btn-primary">Save</button>
+          <a href="{{url_for('profile.user_profile', user_id=user.id)}}" class="btn btn-default" role="button">Cancel</a>
+        </fieldset>
+        <br><br>
+      </form>
+    </div>
+    <div class="col-lg-3"></div>
+  </div>
+{% endblock %}

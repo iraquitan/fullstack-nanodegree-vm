@@ -15,7 +15,8 @@ Project description
 
 ## Quick start 
 * Clone the repo: `git clone https://project_repo`.
-* Run the following code on terminal: `terminal_code`.
+* Run the following code on terminal to populate DB: `python populate_db.py`.
+* Run the following code on terminal to run the server locally: `python runserver.py`.
 
 ## Creator
 **Iraquitan Cordeiro Filho**

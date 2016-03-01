@@ -1,24 +1,7 @@
 {% extends 'main.html' %}
 {% block content %}
+  {% set active_page = 'category_item' %}
   {% include 'header.html' %}
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-      {% for category, message in messages %}
-        {% if category == 'message' %}
-          <div class="alert alert-info alert-dismissible" role="alert">
-        {% elif category == 'error' %}
-          <div class="alert alert-danger alert-dismissible" role="alert">
-        {% elif category == 'warning' %}
-          <div class="alert alert-warning alert-dismissible" role="alert">
-        {% elif category == 'success' %}
-          <div class="alert alert-success alert-dismissible" role="alert">
-        {% endif %}
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <strong>{{ category.capitalize() }}!</strong> {{ message }}
-        </div>
-      {% endfor %}
-    {% endif %}
-  {% endwith %}
   <div class="row">
     <div class="col-lg-1"></div>
     <div class="col-lg-10">
@@ -29,10 +12,19 @@
             <div class="list-group">
               {% for category in categories %}
                 {% if category.id == sel_category.id %}
-                  <a href="{{ url_for('profile.category_items', category_id=category.id) }}" class="list-group-item active">{{ category.name }}</a>
+                  <a href="{{ url_for('profile.category_items', category_id=category.id) }}" class="list-group-item active">
                 {% else %}
-                  <a href="{{ url_for('profile.category_items', category_id=category.id) }}" class="list-group-item">{{ category.name }}</a>
+                  <a href="{{ url_for('profile.category_items', category_id=category.id) }}" class="list-group-item">
                 {% endif %}
+                    {{ category.name }}
+                    {% if current_user.id == category.user.id %}
+                      <span class="pull-right">
+                        <button onclick="window.location.href='{{ url_for('profile.edit_category', category_id=category.id) }}'; return false;" class="btn btn-xs btn-warning">
+                          <span class="glyphicon glyphicon-pencil"></span>
+                        </button>
+                      </span>
+                    {% endif %}
+                  </a>
               {% endfor %}
             </div>
             {% if current_user.is_authenticated %}
@@ -45,7 +37,7 @@
         <div class="col-lg-8">
           <div class="panel panel-info">
             <div class="panel-heading">
-              <h3>{{ sel_category.name }} items <span class="badge">{{ items|length }}</span></h3>
+              <h3>{{ sel_category.name }} items <span class="badge">{{ pagination.total }}</span></h3>
             </div>
             <div class="list-group">
               {% for item in items %}
@@ -78,13 +70,11 @@
                 {% if page %}
                   {% if page != pagination.page %}
                     <li><a href="{{ url_for('profile.category_items', category_id=sel_category.id, page=page) }}">{{ page }}</a></li>
-{#                    <li><a href="{{ url_for('puppies', page=page) }}">{{ page }}</a></li>#}
                   {% else %}
                     <li class="active"><a href="{{ url_for('profile.category_items', category_id=sel_category.id, page=page) }}">{{ page }}</a></li>
-{#                    <li class="active"><a href="{{ url_for('puppies', page=page) }}">{{ page }}</a></li>#}
                   {% endif %}
-{#                  {% else %}#}
-{#                      <span class=ellipsis>…</span>#}
+                {% else %}
+                  <span class=ellipsis>…</span>
                 {% endif %}
               {% endfor %}
               {% if pagination.has_next %}

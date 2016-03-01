@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+    {% for static in statics %}
+        <url>
+            <loc>{{ static|safe }}</loc>
+        </url>
+    {% endfor %}
+    {% for category in categories %}
+        <url>
+            <loc>{{ category[0]|safe }}</loc>
+            <lastmod>{{ category[1] }}</lastmod>
+        </url>
+    {% endfor %}
+    {% for item in items %}
+        <url>
+            <loc>{{ item[0]|safe }}</loc>
+            <image:image>
+               <image:loc>{{ item[1] }}</image:loc>
+               <image:caption>{{ item[2] }}</image:caption>
+            </image:image>
+            <lastmod>{{ item[3] }}</lastmod>
+        </url>
+    {% endfor %}
+</urlset>

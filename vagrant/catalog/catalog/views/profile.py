@@ -11,9 +11,8 @@
 """
 from flask import Blueprint, render_template, flash, redirect, url_for, abort
 from flask.ext.login import login_required, current_user
-
 from catalog import db, app
-from catalog.forms import CategoryForm, ItemForm, DeleteForm
+from catalog.forms import CategoryForm, ItemForm, DeleteForm, UserForm
 from catalog.models import Category, Item, User
 
 profile = Blueprint('profile', __name__)
@@ -103,7 +102,7 @@ def delete_category(category_id):
 def category_items(category_id, page):
     categories = Category.query.all()
     sel_category = Category.query.filter_by(id=category_id).first_or_404()
-    items = Item.query.filter_by(category_id=category_id).paginate(
+    items = Item.query.filter_by(category_id=category_id).order_by('name').paginate(
         page, app.config['POSTS_PER_PAGE'], False)
     if not items and page != 1:
         abort(404)
@@ -226,3 +225,27 @@ def user_profile(user_id):
         flash("You are not authorized to view this user profile.", 'warning')
         return redirect(url_for('home.index'))
     return render_template('profile/user_profile.html', user=user)
+
+
+@profile.route('/user/<int:user_id>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_user(user_id):
+    user = User.query.filter_by(id=user_id).first_or_404()
+    form = UserForm(obj=user)
+    del form.name  # Remove name so user can't change name
+    if current_user.id != user.id:
+        flash("You are not authorized to update this user info. ", 'warning')
+        return redirect(url_for('home.index'))
+    if form.validate_on_submit():
+        user.email = form.email.data
+        user.password = form.password.data
+        user.picture = form.picture.data
+        db.session.add(user)
+        db.session.commit()
+        if app.debug:
+            app.logger.debug("User {} info updated!".format(
+                (user.id, user.name)))
+        flash("User {} info updated!".format(
+            (user.id, user.name)), 'success')
+        return redirect(url_for('profile.user_profile', user_id=user.id))
+    return render_template('profile/edit_user.html', form=form, user=user)
