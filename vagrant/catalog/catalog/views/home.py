@@ -117,25 +117,19 @@ def oauth_callback(provider):
     if not token or token != request.args.get('state'):
         abort(403)
     oauth = OAuthSignIn.get_provider(provider)
-    # social_id, username, email, picture = oauth.callback()
     user_info, social_info = oauth.callback()
     if user_info is None:
         flash('Authentication failed.', category='error')
         return redirect(url_for('home.index'))
-    # TODO Add more than one social profiles and store access tokens
     user = User.query.filter_by(email=user_info[1]).first()
-    # user = User.query.filter_by(social_id=social_id).first()
     if not user:
         user = User(name=user_info[0], email=user_info[1],
                     picture=user_info[2])
-        # user = User(social_id=social_id, name=username, email=email,
-        #             picture=picture)
         db.session.add(user)
         db.session.flush()
         social = UserSocialProfile(provider=social_info[0],
                                    social_id=social_info[1],
-                                   access_token=social_info[2],
-                                   profile=social_info[3], user_id=user.id)
+                                   profile=social_info[2], user_id=user.id)
         db.session.add(social)
         db.session.commit()
         if app.debug:
@@ -147,8 +141,7 @@ def oauth_callback(provider):
         if not social:
             social = UserSocialProfile(provider=social_info[0],
                                        social_id=social_info[1],
-                                       access_token=social_info[2],
-                                       profile=social_info[3], user_id=user.id)
+                                       profile=social_info[2], user_id=user.id)
             db.session.add(social)
             db.session.commit()
             if app.debug:

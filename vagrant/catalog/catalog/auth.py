@@ -64,6 +64,7 @@ class GoogleSignIn(OAuthSignIn):
                 authorize_url="https://accounts.google.com/o/oauth2/v2/auth",
                 # authorize_url=google_params.get('authorization_endpoint'),
                 access_token_url="https://www.googleapis.com/oauth2/v4/token",
+                # access_token_url="https://www.googleapis.com/oauth2/v3/tokeninfo",
                 # access_token_url=google_params.get('token_endpoint'),
                 base_url="https://www.googleapis.com/oauth2/v3/userinfo"
                 # base_url=google_params.get('userinfo_endpoint')
@@ -91,17 +92,10 @@ class GoogleSignIn(OAuthSignIn):
         )
         me = oauth_session.get('').json()
         user_info = (me.get('name'), me.get('email'), me.get('picture'))
-        social_info = ('google', me.get('sub'),
-                       oauth_session.access_token, me.get('profile'))
+        social_info = ('google', me.get('sub'), me.get('profile'))
         return (
             user_info, social_info
         )
-        # return (
-        #     "google${}".format(me['sub']),
-        #     me['name'],
-        #     me['email'],
-        #     me['picture']
-        # )
 
 
 class FacebookSignIn(OAuthSignIn):
@@ -139,19 +133,12 @@ class FacebookSignIn(OAuthSignIn):
         )
         me = oauth_session.get('me',
                                params={'fields': 'name,id,email,link'}).json()
-        social_info = ('facebook', me.get('id'), oauth_session.access_token,
-                  me.get('link'))
+        social_info = ('facebook', me.get('id'), me.get('link'))
         me_picture = oauth_session.get('me/picture',
-                                       params={'redirect': 0, 'height': 200,
-                                               'width': 200}).json()
+                                       params={'redirect': 0, 'height': 500,
+                                               'width': 500}).json()
         user_info = (me.get('name'), me.get('email'),
-                me_picture.get('data').get('url'))
+                     me_picture.get('data').get('url'))
         return (
             user_info, social_info
         )
-        # return (
-        #     "facebook${}".format(me['id']),
-        #     me.get('name'),
-        #     me.get('email'),
-        #     me_picture.get('data')['url']
-        # )

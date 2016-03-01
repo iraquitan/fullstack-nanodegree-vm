@@ -9,16 +9,20 @@
  * Time: 17:47
  * To change this template use File | Settings | File Templates.
 """
+import os
+
 from catalog import db
 from catalog.models import User, Category, Item
 
-# TODO Create DB
+# Create database if not exist
+if not os.path.exists("./catalog/catalog.db"):
+    db.create_all()
 
 # Add User
 user = User(name="Robo Barista", email="tinnyTim@udacity.com",
-            password="rabobarista", picture="https://pbs.twimg.com/profile_images/2671170543/18debd694829ed78203a5a36dd364160_400x400.png")  # noqa
+            password="robobarista", picture="https://pbs.twimg.com/profile_images/2671170543/18debd694829ed78203a5a36dd364160_400x400.png")  # noqa
 db.session.add(user)
-db.commit()
+db.session.commit()
 
 # Add Categories
 categories = ['Soccer', 'Basketball', 'Baseball', 'Frisbee', 'Snowboarding',
@@ -26,19 +30,19 @@ categories = ['Soccer', 'Basketball', 'Baseball', 'Frisbee', 'Snowboarding',
 for category in categories:
     new_category = Category(name=category, user_id=1)
     db.session.add(new_category)
-    db.commit()
+    db.session.commit()
 
 # Soccer Items
 category = Category.query.filter_by(name='Soccer').first()
 
 name = "Two Shin Guards"
-description = "A shin guard or shin pad is a piece of equipment worn on the front of a player’s shin to protect them from injury. These are commonly used in sports including association football (soccer), baseball, ice hockey, field hockey, lacrosse, rugby, cricket, and other sports. This is due to either being required by the rules/laws of the sport or worn voluntarily by the participants for protective measures."  # noqa
+description = "A shin guard or shin pad is a piece of equipment worn on the front of a player's shin to protect them from injury. These are commonly used in sports including association football (soccer), baseball, ice hockey, field hockey, lacrosse, rugby, cricket, and other sports. This is due to either being required by the rules/laws of the sport or worn voluntarily by the participants for protective measures."  # noqa
 picture = "https://s-media-cache-ak0.pinimg.com/564x/dd/dc/39/dddc396a4585532a78b6d7caeea9f5b5.jpg"  # noqa
 
 new_item = Item(name=name, description=description, category=category,
                 picture=picture, user_id=1)
 db.session.add(new_item)
-db.commit()
+db.session.commit()
 
 name = "Shin Guards"
 description = "Whether you're just starting out and are looking for a great price, or are a soccer star in the making and are looking for the highest quality, World Soccer Shop can keep your wallet and your shins out of pain with our great selection of shinguards."  # noqa
@@ -46,7 +50,7 @@ picture = "http://assets.academy.com/mgen/00/10269800.jpg"
 new_item = Item(name=name, description=description, category=category,
                 picture=picture, user_id=1)
 db.session.add(new_item)
-db.commit()
+db.session.commit()
 
 name = "Jersey"
 description = "Soccer jerseys are an important piece of uniform for any soccer game. While a quick recreational game can be played in any athletic clothes, any soccer player can tell you that a good soccer jersey is necessary if you want to be comfortable and play at your best."
@@ -54,15 +58,15 @@ picture = "http://ilb.worldsportshops.com/Images/watermarked_thumbnail.aspx?phot
 new_item = Item(name=name, description=description, category=category,
                 picture=picture, user_id=1)
 db.session.add(new_item)
-db.commit()
+db.session.commit()
 
 name = "Soccer Cleats"
 description = "Cleats or studs are protrusions on the sole of a shoe, or on an external attachment to a shoe, that provide additional traction on a soft or slippery surface. In American English the term cleats is used synecdochically to refer to shoes featuring such protrusions. This does not happen in British English; the term 'studs' is never used to refer to the shoes, which would instead be known as 'football boots', 'rugby boots', and so on."
-picture = "http://vignette3.wikia.nocookie.net/football/images/b/b4/Nike-HYPERVENOM-Phatal-Mens-Firm-Ground-Soccer-Cleat-599075_008_A.jpg/revision/latest?cb=20140204044848&path-prefix=en"
+picture = "http://www.royalsocceracademy.com/images/history-of-soccer-cleats6.jpg"
 new_item = Item(name=name, description=description, category=category,
                 picture=picture, user_id=1)
 db.session.add(new_item)
-db.commit()
+db.session.commit()
 
 # Snowboarding items
 category = Category.query.filter_by(name='Snowboarding').first()
@@ -72,7 +76,7 @@ picture = "http://www.snowlife.com.au/wp-content/uploads/2010/02/snowboarding-go
 new_item = Item(name=name, description=description, category=category,
                 picture=picture, user_id=1)
 db.session.add(new_item)
-db.commit()
+db.session.commit()
 
 name = "Snowboard"
 description = "Snowboards are boards that are usually the width of one's foot longways, with the ability to glide on snow. Snowboards are differentiated from monoskis by the stance of the user. In monoskiing, the user stands with feet inline with direction of travel (facing tip of monoski/downhill) (parallel to long axis of board), whereas in snowboarding, users stand with feet transverse (more or less) to the longitude of the board. Users of such equipment may be referred to as snowboarders. Commercial snowboards generally require extra equipment such as bindings and special boots which help secure both feet of a snowboarder, who generally rides in an upright position. These types of boards are commonly used by people at ski hills or resorts for leisure, entertainment, and competitive purposes in the activity called snowboarding."
@@ -80,7 +84,7 @@ picture = "http://skicarriage.co.uk/UserFiles/Image/White-Snowboard-With-Binding
 new_item = Item(name=name, description=description, category=category,
                 picture=picture, user_id=1)
 db.session.add(new_item)
-db.commit()
+db.session.commit()
 
 # Frisbee items
 category = Category.query.filter_by(name='Frisbee').first()
@@ -90,4 +94,24 @@ picture = "http://g01.a.alicdn.com/kf/HTB1bjepJpXXXXazXFXXq6xXFXXXT/1-piece-Prof
 new_item = Item(name=name, description=description, category=category,
                 picture=picture, user_id=1)
 db.session.add(new_item)
-db.commit()
+db.session.commit()
+
+# Frisbee items
+category = Category.query.filter_by(name='Hockey').first()
+name = "Ice Hockey Stick"
+description = "An ice hockey stick is a piece of equipment used in ice hockey to shoot, pass, and carry the puck. Ice hockey sticks are approximately 150-200 cm long, composed of a long, slender shaft with a flat extension at one end called the blade. The blade is the part of the stick used to contact the puck, and is typically 25 to 40 cm long. Stick dimensions can vary widely, as they are usually built to suit a particular player's size and preference. The blade is positioned at roughly a 135 degree angle from the axis of the shaft, giving the stick a partly 'L-shaped' appearance. The shaft of the stick is fairly rigid, but it has some flexibility to benefit some shots."
+picture = "http://thehockeylocker.co.uk/image/cache/data/reebok-4k-composite-ice-hockey-stick-a1427-500x500.jpg"
+new_item = Item(name=name, description=description, category=category,
+                picture=picture, user_id=1)
+db.session.add(new_item)
+db.session.commit()
+
+name = "Ice Hockey Puck"
+description = "A hockey puck is a disk made of vulcanized rubber that serves the same functions in various games as a ball does in ball games. The best-known use of pucks is in ice hockey, a major international sport."
+picture = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Ice_hockey_puck_-_2.jpg/1280px-Ice_hockey_puck_-_2.jpg?1456786414782"
+new_item = Item(name=name, description=description, category=category,
+                picture=picture, user_id=1)
+db.session.add(new_item)
+db.session.commit()
+
+print("Database populated")

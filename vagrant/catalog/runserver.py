@@ -12,7 +12,4 @@
 from catalog import app, db
 import os
 
-# Create database if not exist
-if not os.path.exists("./catalog/catalog.db"):
-    db.create_all()
 app.run(host='0.0.0.0', port=8000)

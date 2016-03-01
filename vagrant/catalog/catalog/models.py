@@ -22,16 +22,13 @@ class UserSocialProfile(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     provider = db.Column(db.String(150), nullable=False)
     social_id = db.Column(db.String(250))
-    access_token = db.Column(db.String(250), nullable=False)
     profile = db.Column(db.String(250))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    # TODO Need store access token expire time
 
 
 class User(UserMixin, db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
-    # social_id = db.Column(db.String(250), unique=True)  # To handle Oauth
     name = db.Column(db.String(250), nullable=False)
     email = db.Column(db.String(250), nullable=False, unique=True)
     _password = db.Column(db.String(128))
