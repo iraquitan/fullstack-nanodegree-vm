@@ -7,7 +7,7 @@
     <div class="col-lg-6">
       {% if action == 'Edit' %}
         <h1> {{ action }} {{ data_type.name }} </h1>
-        <form action="{{ url_for(form_action, item_id=data_type.id) }}" method="POST">
+        <form action="{{ url_for(form_action, item_slug=data_type.slugfield) }}" method="POST">
       {% elif action == 'Add' %}
         <h1> {{ action }} {{ data_type }} </h1>
         <form action="{{ url_for(form_action) }}" method="POST">
@@ -23,7 +23,7 @@
         <fieldset class="text-right">
           <button type="submit" class="btn btn-primary">{{ action }}</button>
           {% if action == 'Edit' %}
-            <a href="{{url_for('profile.item_profile', item_id=data_type.id)}}" class="btn btn-default" role="button">Cancel</a>
+            <a href="{{url_for('profile.item_profile', item_slug=data_type.slugfield)}}" class="btn btn-default" role="button">Cancel</a>
           {% else %}
             <a href="{{url_for('home.index')}}" class="btn btn-default" role="button">Cancel</a>
           {% endif %}

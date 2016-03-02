@@ -17,15 +17,65 @@
   <script src="https://apis.google.com/js/platform.js?onload=start" async defer></script>
   <meta name="google-signin-client_id" content="{{ config['OAUTH_CREDENTIALS']['google']['id'] }}">
   <script>
+    // Google SignIn start from Developer Google
     function start() {
       gapi.load('auth2', function() {
-        gapi.auth2.init();
+        gapi.auth2.init({
+          client_id: '{{ config['OAUTH_CREDENTIALS']['google']['id'] }}',
+        });
+      });
+      gapi.signin2.render('g_signinButton', {
+        'scope': 'profile email',
+        'accesstype': 'offline',
+        'redirecturi': 'postmessage',
+        'cookiepolicy': 'single_host_origin',
+        'width': 100,
+        'height': 35,
+        'onsuccess': onSuccess,
+        'onfailure': onFailure
       });
     }
+
+    function onSuccess(authResult) {
+      {% set csrf_state = csrf_token() %}
+      // Hide the sign-in button now that the user is authorized
+      $('#g_signinButton').attr('style', 'display: none');
+      // Check if code is in response from google
+      var code = authResult['code'];
+      if (code) { // If yes send the code to server
+        var toServer = code;
+      } else { // If not send the already signed user email to server
+        var profile = authResult.getBasicProfile();
+        var email = profile.getEmail();
+        var toServer = email;
+      }
+      $.ajax({
+        type: 'POST',
+        url: '{{ url_for('home.oauth_callback', provider='google', state=csrf_state) }}',
+        contentType: 'application/octet-stream; charset=utf-8',
+        processData: false,
+        data: toServer,
+        success: function(result) {
+          // Handle or verify the server response.
+          if (result) {
+            $('#result').html('Login Successful!</br>'+ result + '</br>Redirecting...')
+            setTimeout(function() {
+              window.location.href = "{{ url_for('home.index') }}";
+            }, 3000);
+          }
+        }
+      });
+    }
+    function onFailure() {
+      // Handle sign-in errors
+      $('#result').html('Failed to sign in. Try again please.');
+    }
+
   </script>
 </head>
 <body>
 <script>
+  // Facebook SignIn start from Developer Facebook
   window.fbAsyncInit = function() {
     FB.init({
       appId      : '{{ config['OAUTH_CREDENTIALS']['facebook']['id'] }}',
@@ -47,6 +97,7 @@
   }(document, 'script', 'facebook-jssdk'));
 </script>
 <script>
+  // Function to handle logout when user is connecte by Google or Facebook
   function signOut(provider) {
     if (provider === 'google') {
       var auth2 = gapi.auth2.getAuthInstance();

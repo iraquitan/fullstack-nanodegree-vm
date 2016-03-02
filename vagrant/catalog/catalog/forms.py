@@ -17,10 +17,12 @@ from wtforms.validators import InputRequired, Optional, url, email, EqualTo, \
     NoneOf
 
 
+# Form to delete items and categories
 class DeleteForm(Form):
     delete = SubmitField('Delete')
 
 
+# Form for User model
 class UserForm(Form):
     name = StringField('User name', [
         InputRequired(message='User name is required')])
@@ -37,16 +39,14 @@ class UserForm(Form):
                                         Optional()])
 
 
+# Form for Category model
 class CategoryForm(Form):
     name = StringField('Category name', [
         InputRequired(message='Category name is required'),
         NoneOf(values=[], message='Category already exist!')])
 
 
-class DeleteForm(Form):
-    delete = SubmitField('Delete')
-
-
+# Form for Item model
 class ItemForm(Form):
     name = StringField('Item name', [
         InputRequired(message='Item name is required')])
@@ -56,6 +56,7 @@ class ItemForm(Form):
                                         Optional()])
 
 
+# Form used for Login
 class EmailPasswordForm(Form):
     email = EmailField('Email', validators=[email(), InputRequired(
         message='Email is required'

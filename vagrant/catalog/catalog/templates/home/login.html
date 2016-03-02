@@ -4,6 +4,7 @@
   {% set active_page = 'login' %}
   {% set csrf_state = csrf_token() %}
   <script>
+    // Facebook function to run when login process finishes
     function onLogIn() {
       FB.getLoginStatus(function(response) {
         if (response.status === 'connected') {
@@ -36,7 +37,6 @@
       });
     }
   </script>
-
   {% include 'header.html' %}
   <div class="row">
     <div class="col-lg-3"></div>
@@ -45,19 +45,11 @@
       <h3> Social </h3>
       <div class="row">
         <div class="col-lg-6 text-center">
-          <!-- TODO Render Google Sign In button using Javascript -->
-          <div class="g-signin2" id="g_signinButton"
-               data-scope="openid email"
-               data-clientid="{{ config['OAUTH_CREDENTIALS']['google']['id'] }}"
-               data-redirecturi="postmessage"
-               data-accesstype="offline"
-               data-cookiepolicy="single_host_origin"
-               data-onsuccess="onSignIn"
-               data-onfailure="onSignInFailure"
-               data-approvalprompt="force">
-          </div>
+          <!-- Define Google sign in button -->
+          <div id="g_signinButton"></div>
         </div>
         <div class="col-lg-6 text-center">
+          <!-- Define Facebook sign in button -->
           <fb:login-button id="fb_signinButton"
                            scope="public_profile,email"
                            size="large"
@@ -83,39 +75,4 @@
     </div>
     <div class="col-lg-3"></div>
   </div>
-  <script>
-    function onSignIn(authResult) {
-      // Hide the sign-in button now that the user is authorized
-      $('#g_signinButton').attr('style', 'display: none');
-      // Check if code is in response from google
-      var code = authResult['code'];
-      if (code) { // If yes send the code to server
-        var toServer = code;
-      } else { // If not send the already signed user email to server
-        var profile = authResult.getBasicProfile();
-        var email = profile.getEmail();
-        var toServer = email;
-      }
-      $.ajax({
-        type: 'POST',
-        url: '{{ url_for('home.oauth_callback', provider='google', state=csrf_state) }}',
-        contentType: 'application/octet-stream; charset=utf-8',
-        processData: false,
-        data: toServer,
-        success: function(result) {
-          // Handle or verify the server response.
-          if (result) {
-            $('#result').html('Login Successful!</br>'+ result + '</br>Redirecting...')
-            setTimeout(function() {
-              window.location.href = "{{ url_for('home.index') }}";
-            }, 3000);
-          }
-        }
-      });
-    }
-    function onSignInFailure() {
-      // Handle sign-in errors
-      $('#result').html('Failed to sign in. Try again please.');
-    }
-  </script>
 {% endblock %}

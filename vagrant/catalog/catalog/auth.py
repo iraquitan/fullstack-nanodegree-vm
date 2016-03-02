@@ -10,18 +10,18 @@
  * To change this template use File | Settings | File Templates.
 """
 import json
+from flask import url_for, current_app, request, redirect, session
+from rauth import OAuth2Service
 import os
-
 os.environ['http_proxy'] = ''
 os.environ['https_proxy'] = ''
 os.environ['HTTP_PROXY'] = ''
 os.environ['HTTPS_PROXY'] = ''
 import urllib2
 
-from flask import url_for, current_app, request, redirect, session
-from rauth import OAuth2Service
 
-
+# Define an skeleton class to ease Oauth process
+# from http://blog.miguelgrinberg.com/post/oauth-authentication-with-flask
 class OAuthSignIn(object):
     providers = None
 
@@ -51,6 +51,7 @@ class OAuthSignIn(object):
         return cls.providers[provider_name]
 
 
+# Define Google signin
 class GoogleSignIn(OAuthSignIn):
     def __init__(self):
         super(GoogleSignIn, self).__init__('google')
@@ -76,6 +77,7 @@ class GoogleSignIn(OAuthSignIn):
                 base_url="https://www.googleapis.com/oauth2/v3/userinfo"
             )
 
+    # Not used anymore, now authorization is started in client side
     def authorize(self):
         return redirect(self.service.get_authorize_url(
             scope='email profile',
@@ -83,10 +85,12 @@ class GoogleSignIn(OAuthSignIn):
             redirect_uri=self.get_callback_url())
             )
 
+    # Google callback to get access token and retrieve user information
     def callback(self):
         auth_code = request.data
         if not auth_code:
             return None, None
+        # Retrieve access token from authorization code
         oauth_session = self.service.get_auth_session(
                 data={'code': auth_code,
                       'grant_type': 'authorization_code',
@@ -94,6 +98,7 @@ class GoogleSignIn(OAuthSignIn):
                       },
                 decoder=json.loads
         )
+        # Use access token to retrieve user info
         me = oauth_session.get('').json()
         user_info = (me.get('name'), me.get('email'), me.get('picture'))
         social_info = ('google', me.get('sub'), me.get('profile'))
@@ -115,6 +120,7 @@ class FacebookSignIn(OAuthSignIn):
             base_url='https://graph.facebook.com/'
         )
 
+    # Not used anymore, now authorization is started in client side
     def authorize(self):
         return redirect(self.service.get_authorize_url(
             scope='email',
@@ -122,15 +128,18 @@ class FacebookSignIn(OAuthSignIn):
             redirect_uri=self.get_callback_url())
         )
 
+    # Facebook callback to get access token and retrieve user information
     def callback(self):
         auth_code = request.data
         if not auth_code:
             return None, None
+        # Retrieve access token from authorization code
         oauth_session = self.service.get_auth_session(
             data={'fb_exchange_token': auth_code,
                   'grant_type': 'fb_exchange_token',
                   'redirect_uri': self.get_callback_url()}
         )
+        # Use access token to retrieve user info
         me = oauth_session.get('me',
                                params={'fields': 'name,id,email,link'}).json()
         social_info = ('facebook', me.get('id'), me.get('link'))

@@ -7,15 +7,15 @@
     <div class="col-lg-10">
       <h1>Are you sure you want to delete {{ object.name }} ?</h1>
       {% if action == 'item' %}
-        <form action="{{ url_for(form_action, item_id=object.id) }}" method = 'POST'>
+        <form action="{{ url_for(form_action, item_slug=object.slugfield) }}" method = 'POST'>
           {{ form.hidden_tag() }}
           <input type='submit' class="btn btn-danger" value='Delete'>
-          <a href="{{ url_for('profile.item_profile', item_id=object.id) }}" class="btn btn-default" role="button">Cancel</a>
+          <a href="{{ url_for('profile.item_profile', item_slug=object.slugfield) }}" class="btn btn-default" role="button">Cancel</a>
       {% elif action == 'category' %}
-        <form action="{{ url_for(form_action, category_id=object.id) }}" method = 'POST'>
+        <form action="{{ url_for(form_action, category_slug=object.slugfield) }}" method = 'POST'>
           {{ form.hidden_tag() }}
           <input type='submit' class="btn btn-danger" value='Delete'>
-          <a href="{{ url_for('home.index') }}" class="btn btn-default" role="button">Cancel</a>
+          <a href="{{ url_for('profile.category_items', category_slug=object.slugfield) }}" class="btn btn-default" role="button">Cancel</a>
       {% endif %}
       </form>
     </div>

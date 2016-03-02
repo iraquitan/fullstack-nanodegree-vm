@@ -12,18 +12,11 @@
             <div class="list-group">
               {% for category in categories %}
                 {% if category.id == sel_category.id %}
-                  <a href="{{ url_for('profile.category_items', category_id=category.id) }}" class="list-group-item active">
+                  <a href="{{ url_for('profile.category_items', category_slug=category.slugfield) }}" class="list-group-item active">
                 {% else %}
-                  <a href="{{ url_for('profile.category_items', category_id=category.id) }}" class="list-group-item">
+                  <a href="{{ url_for('profile.category_items', category_slug=category.slugfield) }}" class="list-group-item">
                 {% endif %}
                     {{ category.name }}
-                    {% if current_user.id == category.user.id %}
-                      <span class="pull-right">
-                        <button onclick="window.location.href='{{ url_for('profile.edit_category', category_id=category.id) }}'; return false;" class="btn btn-xs btn-warning">
-                          <span class="glyphicon glyphicon-pencil"></span>
-                        </button>
-                      </span>
-                    {% endif %}
                   </a>
               {% endfor %}
             </div>
@@ -37,11 +30,23 @@
         <div class="col-lg-8">
           <div class="panel panel-info">
             <div class="panel-heading">
-              <h3>{{ sel_category.name }} items <span class="badge">{{ pagination.total }}</span></h3>
+              <h3>{{ sel_category.name }} items
+                <span class="badge">{{ pagination.total }}</span>
+                {% if current_user.id == sel_category.user.id %}
+                  <span class="pull-right">
+                    <a href="{{ url_for('profile.edit_category', category_slug=sel_category.slugfield) }}" class="btn btn-xs btn-warning" role="button">
+                      <span class="glyphicon glyphicon-pencil"></span>
+                    </a>
+                    <a href="{{ url_for('profile.delete_category', category_slug=sel_category.slugfield) }}" class="btn btn-xs btn-danger" role="button">
+                      <span class="glyphicon glyphicon-trash"></span>
+                    </a>
+                  </span>
+                {% endif %}
+              </h3>
             </div>
             <div class="list-group">
               {% for item in items %}
-                <a href="{{ url_for('profile.item_profile', item_id = item.id) }}" class="list-group-item">{{ item.name }}
+                <a href="{{ url_for('profile.item_profile', item_slug = item.slugfield) }}" class="list-group-item">{{ item.name }}
                   <span class="label label-default">{{ item.category.name }}</span>
                 </a>
               {% endfor %}
@@ -57,7 +62,7 @@
             <ul class="pagination">
               {% if pagination.has_prev %}
                 <li>
-                  <a href="{{ url_for('profile.category_items', category_id=sel_category.id, page=(pagination.prev_num)) }}" aria-label="Previous">
+                  <a href="{{ url_for('profile.category_items', category_slug=sel_category.slugfield, page=(pagination.prev_num)) }}" aria-label="Previous">
                     <span aria-hidden="true">&laquo;</span>
                   </a>
                 </li>
@@ -69,9 +74,9 @@
               {%- for page in pagination.iter_pages() %}
                 {% if page %}
                   {% if page != pagination.page %}
-                    <li><a href="{{ url_for('profile.category_items', category_id=sel_category.id, page=page) }}">{{ page }}</a></li>
+                    <li><a href="{{ url_for('profile.category_items', category_slug=sel_category.slugfield, page=page) }}">{{ page }}</a></li>
                   {% else %}
-                    <li class="active"><a href="{{ url_for('profile.category_items', category_id=sel_category.id, page=page) }}">{{ page }}</a></li>
+                    <li class="active"><a href="{{ url_for('profile.category_items', category_slug=sel_category.slugfield, page=page) }}">{{ page }}</a></li>
                   {% endif %}
                 {% else %}
                   <span class=ellipsis>…</span>
@@ -79,7 +84,7 @@
               {% endfor %}
               {% if pagination.has_next %}
                 <li>
-                  <a href="{{ url_for('profile.category_items', category_id=sel_category.id, page=(pagination.next_num)) }}" aria-label="Next">
+                  <a href="{{ url_for('profile.category_items', category_slug=sel_category.slugfield, page=(pagination.next_num)) }}" aria-label="Next">
                     <span aria-hidden="true">&raquo;</span>
                   </a>
                 </li>

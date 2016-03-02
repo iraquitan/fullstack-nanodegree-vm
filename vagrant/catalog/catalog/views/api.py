@@ -13,6 +13,7 @@ from flask import Blueprint, jsonify
 
 from catalog.models import Category, Item
 
+# Define api Blueprint for JSON endpoints
 api = Blueprint('api', __name__)
 
 
@@ -28,22 +29,22 @@ def catalog_api():
     return jsonify(Category=all_result)
 
 
-@api.route('/category/<int:category_id>/json')
-def category_api(category_id):
-    category = Category.query.filter_by(id=category_id).first_or_404()
+@api.route('/category/<string:category_slug>.json')
+def category_api(category_slug):
+    category = Category.query.filter_by(slugfield=category_slug).first_or_404()
     return jsonify(category=category.serialize)
 
 
-@api.route('/category/<int:category_id>/items.json')
-def category_items_api(category_id):
-    category = Category.query.filter_by(id=category_id).first_or_404()
+@api.route('/category/<string:category_slug>/items.json')
+def category_items_api(category_slug):
+    category = Category.query.filter_by(slugfield=category_slug).first_or_404()
     items = Item.query.filter_by(category_id=category.id).all()
     result = category.serialize
     result['item'] = [i.serialize for i in items]
     return jsonify(category=result)
 
 
-@api.route('/item/<int:item_id>/item.json')
-def item_api(item_id):
-    item = Item.query.filter_by(id=item_id).first_or_404()
+@api.route('/item/<string:item_slug>.json')
+def item_api(item_slug):
+    item = Item.query.filter_by(slugfield=item_slug).first_or_404()
     return jsonify(item=item.serialize)
