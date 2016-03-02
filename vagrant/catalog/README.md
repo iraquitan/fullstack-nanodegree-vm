@@ -21,21 +21,21 @@ A project for a catalog app, where users can sign up with email and password or 
 * Change to the `/catalog` directory.
 * Create a local config file in `instance/config.py`.
 * And fill with local config like database location and Oauth credentials as in the example below:
-<code>
+```python
 DEBUG = True
 SECRET_KEY = 'your_super_secret_key'
 SQLALCHEMY_DATABASE_URI = "sqlite:///../catalog/catalog.db"
 OAUTH_CREDENTIALS = {
-&nbsp;&nbsp;&nbsp;&nbsp;'google': {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'id': "Google__client__id.apps.googleusercontent.com",
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'secret': "Google_client_secret_"
-&nbsp;&nbsp;&nbsp;&nbsp;},
-&nbsp;&nbsp;&nbsp;&nbsp;'facebook': {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'id': "Facebook_client_id",
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'secret': "Facebook_client_secret"
-&nbsp;&nbsp;&nbsp;&nbsp;}
+    'google': {
+        'id': "Google__client__id.apps.googleusercontent.com",
+        'secret': "Google_client_secret_"
+    },
+    'facebook': {
+        'id': "Facebook_client_id",
+        'secret': "Facebook_client_secret"
+    }
 }
-<code>
+```
 * Run the following code on terminal to populate DB: `python populate_db.py`.
 * Run the following code on terminal to run the server locally: `python runserver.py`.
 
