@@ -1,5 +1,5 @@
 # catalog-app
-Project description
+A project for a catalog app, where users can sign up with email and password or Google or Facebook accounts. Logged users can add, edit and delete categories and items. Anonymous users can only view the items and categories. Logged users can only edit and delete their onw categories and items. There is also a Json API for all the catalog, for category items, for items and categories. Also features a sitemap.xml file with static, categories and items loc and images.
 
 ## Table of contents
 * [Requirements](#requirements)
