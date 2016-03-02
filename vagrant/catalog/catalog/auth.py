@@ -130,9 +130,6 @@ class FacebookSignIn(OAuthSignIn):
             data={'fb_exchange_token': auth_code,
                   'grant_type': 'fb_exchange_token',
                   'redirect_uri': self.get_callback_url()}
-            # data={'code': auth_code,
-            #       'grant_type': 'authorization_code',
-            #       'redirect_uri': self.get_callback_url()}
         )
         me = oauth_session.get('me',
                                params={'fields': 'name,id,email,link'}).json()

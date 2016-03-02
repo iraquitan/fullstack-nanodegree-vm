@@ -19,32 +19,52 @@
   <script>
     function start() {
       gapi.load('auth2', function() {
-{#        gapi.auth2.init();#}
-        gapi.auth2.getAuthInstance();
+        gapi.auth2.init();
       });
     }
-
-    window.fbAsyncInit = function() {
+  </script>
+</head>
+<body>
+<script>
+  window.fbAsyncInit = function() {
     FB.init({
       appId      : '{{ config['OAUTH_CREDENTIALS']['facebook']['id'] }}',
       cookie     : true,  // enable cookies to allow the server to access
                           // the session
       xfbml      : true,  // parse social plugins on this page
+      status      : true, // to track facebook status to logout
       version    : 'v2.5' // use graph api version 2.5
     });
-    };
+  };
 
-    // Load the SDK asynchronously
-    (function(d, s, id) {
-      var js, fjs = d.getElementsByTagName(s)[0];
-      if (d.getElementById(id)) return;
-      js = d.createElement(s); js.id = id;
-      js.src = "//connect.facebook.net/en_US/sdk.js";
-      fjs.parentNode.insertBefore(js, fjs);
-    }(document, 'script', 'facebook-jssdk'));
-  </script>
-</head>
-<body>
+  // Load the SDK asynchronously
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+</script>
+<script>
+  function signOut(provider) {
+    if (provider === 'google') {
+      var auth2 = gapi.auth2.getAuthInstance();
+      auth2.signOut().then(function () {
+        console.log('Google user signed out.');
+      });
+    } else if (provider === 'facebook') {
+      FB.getLoginStatus(function(response) {
+        if (response && response.status === 'connected') {
+          FB.logout(function (response) {
+            // user is now logged out
+            console.log('Facebook user signed out.');
+          });
+        }
+      });
+    }
+  }
+</script>
 <div class="container">
   {% block content %}
   {% endblock %}

@@ -13,30 +13,13 @@
       });
     }
 
-{#    window.fbAsyncInit = function() {#}
-{#    FB.init({#}
-{#      appId      : '{{ config['OAUTH_CREDENTIALS']['facebook']['id'] }}',#}
-{#      cookie     : true,  // enable cookies to allow the server to access#}
-{#                          // the session#}
-{#      xfbml      : true,  // parse social plugins on this page#}
-{#      version    : 'v2.5' // use graph api version 2.5#}
-{#    });#}
-{#    };#}
-{##}
-{#    // Load the SDK asynchronously#}
-{#    (function(d, s, id) {#}
-{#      var js, fjs = d.getElementsByTagName(s)[0];#}
-{#      if (d.getElementById(id)) return;#}
-{#      js = d.createElement(s); js.id = id;#}
-{#      js.src = "//connect.facebook.net/en_US/sdk.js";#}
-{#      fjs.parentNode.insertBefore(js, fjs);#}
-{#    }(document, 'script', 'facebook-jssdk'));#}
-
     function sendToServer(auth_token) {
       $.ajax({
         type: 'POST',
         url: '{{ url_for('home.oauth_callback', provider='facebook', state=csrf_state) }}',
-        contentType: 'application/octet-stream; charset=utf-8',
+        contentType: "application/json; charset=utf-8",
+        dataType: 'json',
+{#        contentType: 'application/octet-stream; charset=utf-8',#}
         processData: false,
         data: auth_token,
         success: function(result) {
@@ -62,6 +45,7 @@
       <h3> Social </h3>
       <div class="row">
         <div class="col-lg-6 text-center">
+          <!-- TODO Render Google Sign In button using Javascript -->
           <div class="g-signin2" id="g_signinButton"
                data-scope="openid email"
                data-clientid="{{ config['OAUTH_CREDENTIALS']['google']['id'] }}"
@@ -100,9 +84,6 @@
     <div class="col-lg-3"></div>
   </div>
   <script>
-    auth2 = gapi.auth2.init();
-    auth2.attachClickHandler('g_signinButton', onSignIn, onSignInFailure);
-
     function onSignIn(authResult) {
       // Hide the sign-in button now that the user is authorized
       $('#g_signinButton').attr('style', 'display: none');

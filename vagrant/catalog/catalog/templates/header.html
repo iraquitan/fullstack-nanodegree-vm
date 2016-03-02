@@ -56,19 +56,3 @@
     {% endfor %}
   {% endif %}
 {% endwith %}
-<script>
-  function signOut(provider) {
-    if (provider === 'google') {
-      var auth2 = gapi.auth2.getAuthInstance();
-      auth2.signOut().then(function () {
-        console.log('Google user signed out.');
-      });
-    } else if (provider == 'facebook') {
-      FB.logout(function(response) {
-        // user is now logged out
-        // TODO FB.logout called withou access token error
-        console.log('Facebook user signed out.');
-      });
-    }
-  }
-</script>
